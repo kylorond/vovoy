@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Galeri Digital - Onal & Opie</title>
+    <meta name="description" content="Galeri digital kenangan manis sepasang kekasih dengan desain cinematic dan editorial.">
+    <meta name="theme-color" content="#0a0a0a">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Cormorant Garamond (Sangat Elegan) & Montserrat (Bersih/Modern) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        /* Konfigurasi Font & Body Global */
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #050505; /* Hitam lebih pekat untuk kontras tinggi */
+            color: #f8f8f2;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        h1, h2, h3, .font-serif, .quote-text {
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* Custom Cursor (Hanya aktif di perangkat yang mendukung hover) */
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: none; }
+            .custom-cursor {
+                position: fixed;
+                top: 0; left: 0;
+                width: 10px; height: 10px;
+                background-color: #d4af37;
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 9999;
+                transform: translate(-50%, -50%);
+                transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                            height 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                            background-color 0.3s, mix-blend-mode 0.3s;
+                mix-blend-mode: difference;
+                will-change: transform, width, height;
+            }
+            .custom-cursor.hovered {
+                width: 60px;
+                height: 60px;
+                background-color: rgba(255, 255, 255, 0.15);
+                backdrop-filter: blur(4px);
+                -webkit-backdrop-filter: blur(4px);
+                border: 1px solid rgba(255,255,255,0.4);
+                mix-blend-mode: normal;
+            }
+        }
+        
+        /* Sembunyikan custom cursor di perangkat sentuh */
+        @media (hover: none) { .custom-cursor { display: none !important; } }
+
+        /* Custom Scrollbar yang Elegan */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; transition: background 0.3s;}
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+
+        /* Utility Animasi Scroll Reveal (Performa Tinggi) */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        transform 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: opacity, transform;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            will-change: opacity, transform;
+        }
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+        .delay-400 { transition-delay: 400ms; }
+
+        /* Efek Hover Gambar & Video Galeri Editorial */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            /* Pastikan tidak terpotong di masonry antar kolom */
+            break-inside: avoid;
+            margin-bottom: 1.5rem; 
+        }
+        .gallery-item img, .gallery-item video {
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s ease;
+            will-change: transform, filter;
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+        /* Efek interaktif disesuaikan untuk touch (active) dan desktop (hover) */
+        @media (hover: hover) {
+            .gallery-item:hover img, .gallery-item:hover video {
+                transform: scale(1.06);
+                filter: brightness(0.7) contrast(1.1);
+            }
+        }
+        .gallery-item:active img, .gallery-item:active video {
+            transform: scale(1.03);
+            filter: brightness(0.7);
+        }
+
+        .gallery-info {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%;
+            padding: 2rem 1.5rem 1.5rem 1.5rem;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            pointer-events: none;
+        }
+        @media (hover: hover) {
+            .gallery-item:hover .gallery-info {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* Selalu tampilkan info di mobile jika sentuhan dilakukan */
+        @media (max-width: 768px) {
+            .gallery-item.touch-active .gallery-info {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Marquee Text Animation */
+        .marquee-container {
+            overflow: hidden;
+            white-space: nowrap;
+            display: flex;
+            width: 100vw;
+            user-select: none;
+        }
+        .marquee-content {
+            display: inline-flex;
+            animation: marquee 40s linear infinite;
+            will-change: transform;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Music Equalizer Animation */
+        .eq-bar {
+            width: 2px;
+            background-color: #d4af37;
+            border-radius: 2px;
+            transition: height 0.3s ease;
+            transform-origin: bottom;
+        }
+        .music-playing .eq-bar:nth-child(1) { animation: eq 0.8s ease-in-out infinite alternate; }
+        .music-playing .eq-bar:nth-child(2) { animation: eq 1s ease-in-out infinite alternate-reverse; }
+        .music-playing .eq-bar:nth-child(3) { animation: eq 0.6s ease-in-out infinite alternate; }
+        .music-playing .eq-bar:nth-child(4) { animation: eq 0.9s ease-in-out infinite alternate-reverse; }
+        
+        @keyframes eq {
+            0% { height: 3px; }
+            100% { height: 16px; }
+        }
+
+        /* Loader & Overlay Effects */
+        #loader {
+            transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.2s;
+        }
+        
+        /* Film Grain Effect */
+        .film-grain {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.04;
+            background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+        }
+
+        /* Navbar Blur & Scrolled state */
+        .nav-scrolled {
+            background-color: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+        }
+        
+        /* Cinematic Vignette di Hero */
+        .vignette-overlay {
+            background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 120%);
+        }
+
+        /* --- TAMBAHAN BARU: Welcome Screen & Elemen Estetik --- */
+        .welcome-slide-up {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Efek cahaya elegan pada teks judul */
+        .glow-text {
+            text-shadow: 0 0 40px rgba(255,255,255,0.3), 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+        
+        /* Animasi Hero akan tertunda sampai layar sampul dibuka */
+        .site-entered .hero-animate {
+            animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-[#d4af37] selection:text-black">
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor hidden md:block" id="cursor"></div>
+
+    <!-- AUDIO PLAYER -->
+    <!-- GANTI SRC DI BAWAH DENGAN URL MUSIK MP3 ANDA -->
+    <audio id="bg-music" loop preload="auto" autoplay>
+        <source src="Music/Backsound.mp3" type="audio/mpeg">
+        Browser Anda tidak mendukung elemen audio.
+    </audio>
+
+    <!-- Floating Audio Controller (Responsif positioning) -->
+    <button id="music-toggle" aria-label="Toggle Music" class="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full p-4 flex items-center justify-center gap-3 hover-target group transition-all duration-300 hover:bg-black/80 hover:border-[#d4af37]/40 shadow-2xl">
+        <div class="flex items-end h-4 gap-[3px] w-5" id="eq-container">
+            <div class="eq-bar h-[3px]"></div>
+            <div class="eq-bar h-[6px]"></div>
+            <div class="eq-bar h-[2px]"></div>
+            <div class="eq-bar h-[4px]"></div>
+        </div>
+        <span class="text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium text-white/70 group-hover:text-white transition-colors" id="music-label">Play</span>
+    </button>
+
+    <!-- SAMPUL DEPAN / WELCOME SCREEN (Solusi Cerdas untuk Audio Autoplay) -->
+    <div id="welcome-screen" class="fixed inset-0 z-[100] bg-[#050505] flex flex-col items-center justify-center transition-all duration-[1.2s] ease-[cubic-bezier(0.77,0,0.175,1)]">
+        <!-- Background Redup untuk Sampul -->
+        <div class="absolute inset-0 z-0">
+            <div class="w-full h-full bg-cover bg-center opacity-30 transform scale-105" style="background-image: url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop');"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/80 to-[#050505]"></div>
+        </div>
+        
+        <div class="relative z-10 text-center flex flex-col items-center px-6 w-full">
+            <!-- Garis Dekoratif -->
+            <div class="w-[1px] h-16 md:h-24 bg-gradient-to-b from-transparent to-[#d4af37]/60 mb-6"></div>
+            
+            <p class="text-[9px] md:text-[10px] tracking-[0.5em] text-[#d4af37] uppercase mb-4 font-medium animate-pulse">
+                Private Exhibition
+            </p>
+            
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif italic text-white mb-2 tracking-wider glow-text">
+                Ronald & Yovita
+            </h1>
+            
+            <p class="text-[9px] text-white/40 tracking-widest uppercase mb-12">
+                Palangka Raya, Okt 2026
+            </p>
+            
+            <!-- Tombol Interaksi (Memicu Audio) -->
+            <button id="btn-open" class="group relative px-8 py-4 bg-transparent border border-[#d4af37]/30 rounded-full overflow-hidden hover:border-[#d4af37] transition-all duration-500 shadow-[0_0_20px_rgba(212,175,55,0.0)] hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]">
+                <div class="absolute inset-0 bg-gradient-to-r from-[#d4af37] to-[#b5952f] transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></div>
+                <span class="relative z-10 text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/80 group-hover:text-black font-semibold transition-colors duration-500 flex items-center gap-3">
+                    Buka Galeri <i class="ph ph-envelope-open text-lg"></i>
+                </span>
+            </button>
+            
+            <!-- Garis Dekoratif -->
+            <div class="w-[1px] h-16 md:h-24 bg-gradient-to-t from-transparent to-[#d4af37]/60 mt-6"></div>
+        </div>
+    </div>
+
+    <!-- Tekstur Analog Grain -->
+    <div class="film-grain"></div>
+
+    <!-- Navbar Pintar -->
+    <nav id="navbar" class="fixed w-full z-40 transition-all duration-500 px-6 py-6 md:px-12 flex justify-between items-center bg-gradient-to-b from-black/80 via-black/30 to-transparent">
+        <div class="text-lg md:text-2xl font-serif tracking-[0.2em] font-light text-white hover-target cursor-pointer z-50">
+            RONALD <span class="italic text-[#d4af37]">&</span> YOVITA
+        </div>
+        
+        <!-- Desktop Menu -->
+        <div class="hidden md:flex space-x-12 text-[11px] tracking-[0.2em] uppercase text-white/70 font-medium">
+            <a href="#prolog" class="hover:text-[#d4af37] hover:tracking-[0.25em] hover-target transition-all duration-300">Prolog</a>
+            <a href="#galeri" class="hover:text-[#d4af37] hover:tracking-[0.25em] hover-target transition-all duration-300">Arsip</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-[100svh] w-full flex items-center justify-center overflow-hidden bg-black">
+        
+        <!-- Background Layer -->
+        <div class="absolute inset-0 z-0">
+            <!-- Background Gambar (Default) -->
+            <!-- Ganti URL di backgroundImage untuk mengganti foto utama -->
+            <div class="w-full h-full bg-cover bg-center opacity-60 transform scale-105 animate-[slowZoom_25s_ease-in-out_infinite_alternate]" 
+                 style="background-image: url('Images/1.png'); background-position: center 30%;">
+            </div>
+
+            <!-- Gradient Overlays & Vignette untuk memastikan teks terbaca & memberi kesan dramatis -->
+            <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/20 to-black/40"></div>
+            <div class="absolute inset-0 vignette-overlay"></div>
+        </div>
+        <style>@keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.15); } }</style>
+
+        <!-- Main Hero Content -->
+        <div class="relative z-10 text-center px-4 w-full flex flex-col items-center justify-center h-full pt-16">
+            <p class="hero-animate text-[10px] md:text-xs tracking-[0.5em] text-[#d4af37] uppercase mb-6 md:mb-8 opacity-0 transform translate-y-6 font-medium" style="animation-delay: 0.4s;">
+                Digital Exhibition
+            </p>
+            
+            <!-- Judul Sinematik yang Responsif -->
+            <h1 class="hero-animate text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] font-serif font-light text-white leading-[0.9] mb-6 md:mb-8 opacity-0 transform translate-y-8 tracking-wide drop-shadow-2xl glow-text" style="animation-delay: 0.7s;">
+                Our <span class="italic text-white/90">Moments</span>
+            </h1>
+            
+            <p class="hero-animate text-xs md:text-sm font-light text-white/70 opacity-0 transform translate-y-6 max-w-[280px] md:max-w-md mx-auto tracking-wide leading-relaxed" style="animation-delay: 1s;">
+                Menangkap fragmen waktu; tawa yang terbingkai, pandangan yang abadi dan rasa yang tak pernah pudar.
+            </p>
+            
+            <!-- Indikator Scroll Halus
+            <a href="#prolog" class="hero-animate hover-target absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-0 group" style="animation-delay: 1.5s;">
+                <span class="text-[9px] uppercase tracking-[0.4em] text-white/40 group-hover:text-white transition-colors duration-300">Gulir ke Bawah</span>
+                <div class="w-[1px] h-12 bg-white/20 relative overflow-hidden group-hover:h-16 group-hover:bg-white/30 transition-all duration-500">
+                    <div class="absolute top-0 left-0 w-full h-1/2 bg-[#d4af37] animate-[scrollDown_1.5s_ease-in-out_infinite]"></div>
+                </div>
+            </a> -->
+        </div>
+    </header>
+
+    <style>
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes scrollDown { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
+    </style>
+
+    <!-- Marquee Pembatas -->
+    <div class="py-8 border-y border-white/5 bg-[#050505] relative z-20 overflow-hidden">
+        <div class="marquee-container text-white/10 font-serif italic text-3xl md:text-5xl lg:text-6xl">
+            <div class="marquee-content">
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">A timeless connection.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Moments frozen in light.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Just you and me.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">A timeless connection.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Moments frozen in light.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Just you and me.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+            </div>
+            <!-- Duplikasi untuk loop tak terhingga -->
+            <div class="marquee-content" aria-hidden="true">
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">A timeless connection.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Moments frozen in light.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Just you and me.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">A timeless connection.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Moments frozen in light.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Just you and me.</span>
+                <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prolog (Editorial Layout - Mobile Responsive) -->
+    <section id="prolog" class="py-24 md:py-40 px-6 max-w-7xl mx-auto flex flex-col md:flex-row gap-12 md:gap-24 items-center">
+        <!-- Area Gambar Prolog -->
+        <div class="w-full md:w-5/12 reveal-scale">
+            <div class="relative w-full aspect-[4/5] md:aspect-[3/4] overflow-hidden rounded-sm group shadow-2xl">
+                <img src="Images/12.png" alt="Ronald & Yovita Prolog" loading="lazy" class="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transform group-hover:scale-105 transition duration-[1.5s] ease-out">
+                
+                <!-- Elemen Dekoratif Pinggiran Emas -->
+                <div class="absolute -bottom-4 -right-4 md:-bottom-6 md:-right-6 w-24 h-24 md:w-32 md:h-32 border-b border-r border-[#d4af37]/80 z-[-1]"></div>
+                <!-- Frame dalam foto -->
+                <div class="absolute inset-4 border border-white/20 z-10 pointer-events-none opacity-50"></div>
+            </div>
+        </div>
+        
+        <!-- Area Teks Prolog -->
+        <div class="w-full md:w-7/12 flex flex-col justify-center text-center md:text-left mt-8 md:mt-0">
+            <div class="reveal flex items-center justify-center md:justify-start gap-4 mb-6">
+                <span class="w-8 md:w-12 h-[1px] bg-[#d4af37]"></span>
+                <h2 class="text-[#d4af37] text-[10px] tracking-[0.4em] uppercase font-medium">Bab I: Prolog</h2>
+            </div>
+            
+            <h3 class="text-4xl sm:text-5xl lg:text-[4rem] font-serif leading-[1.1] mb-8 reveal delay-100">
+                Bukan sekadar <br> <span class="italic text-white/80 font-light">pose di depan kamera.</span>
+            </h3>
+            
+            <p class="text-white/60 font-light leading-relaxed mb-10 reveal delay-200 text-sm md:text-base max-w-xl mx-auto md:mx-0">
+                Koleksi ini adalah arsip dari hari-hari biasa yang terasa luar biasa. Dari sesi studio yang terkonsep rapi hingga keseruan spontan yang berisik di bilik <i>photobooth</i>. Kami membiarkan lensa menangkap apa adanya: canggung yang menggemaskan, tawa yang lepas dan kebersamaan yang jujur.
+            </p>
+            
+            <!-- <div class="reveal delay-300 flex justify-center md:justify-start">
+                <img src="Images/3.png" alt="Signature" class="h-10 md:h-12 filter invert opacity-30">
+            </div> -->
+        </div>
+    </section>
+
+    <!-- Galeri Arsip (Mendukung Foto, GIF, dan Video) -->
+    <section id="galeri" class="px-4 sm:px-6 md:px-8 pb-32 md:pb-48 max-w-[1600px] mx-auto bg-[#050505] relative z-10">
+        
+        <!-- Header Galeri -->
+        <div class="text-center mb-16 md:mb-24 reveal flex flex-col items-center">
+            <h2 class="text-4xl md:text-6xl lg:text-7xl font-serif italic text-white/90">Arsip Visual</h2>
+            <div class="w-16 h-[1px] bg-[#d4af37] my-6"></div>
+            <p class="text-[10px] md:text-xs tracking-[0.3em] text-white/40 uppercase font-medium">Photo, GIF & Video Series</p>
+        </div>
+
+        <!-- CSS Columns untuk layout Masonry -->
+        <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6">
+            
+            <!-- ITEM 1 (Gambar Statis) -->
+            <div class="gallery-item hover-target reveal cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti URL src di bawah dengan foto Anda -->
+                <img src="Images/Frame 1.png" alt="Tawa Pertama" loading="lazy">
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Tawa Pertama</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Sesi Studio</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <!-- Tombol Unduh -->
+                        <button onclick="downloadMedia(event, 'Images/Frame 1.png', 'tawa-pertama.jpg')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors" title="Unduh">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10 transition-colors" title="Lihat Penuh">
+                            <i class="ph ph-arrows-out-simple text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/1.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">24 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/1.png', 'polaroid1.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/2.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">24 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/2.png', 'polaroid2.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/3.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">24 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/3.png', 'polaroid3.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/4.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/4.png', 'polaroid4.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <!-- ITEM 2 (Video Autoplay) -->
+            <!-- Video butuh atribut autoplay, loop, muted, playsinline agar bisa terputar otomatis di semua device -->
+            <div class="gallery-item hover-target reveal delay-100 cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti src dengan video MP4 Anda -->
+                <video autoplay loop muted playsinline class="grayscale group-hover:grayscale-0">
+                    <source src="Video/Video 1.mp4" type="video/mp4">
+                    Browser Anda tidak mendukung video tag.
+                </video>
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Bergerak</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Sinematik Video</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Video 1.mp4', 'momen-bergerak1.mp4')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <!-- Icon Play menandakan ini video -->
+                            <i class="ph ph-play text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 3 (Gambar GIF) -->
+            <div class="gallery-item hover-target reveal cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti src dengan video MP4 Anda -->
+                <video autoplay loop muted playsinline class="sepia-[.4] group-hover:sepia-0">
+                    <source src="VIdeo/Gif 1.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Kandid Bergerak</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Outdoor Set</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Gif 1.mp4', 'kandid-bergerak1.mp4')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <i class="ph ph-play text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="gallery-item hover-target reveal delay-200 cursor-pointer group" onclick="openLightbox(this)">
+                <img src="Video/Gif 1.mp4" alt="Candaan" loading="lazy">
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Candaan</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">GIF Animasi</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Gif 1.mp4', 'candaan.gif')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <i class="ph ph-arrows-out-simple text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- ITEM 4 (Gambar Statis) -->
+            <div class="gallery-item hover-target reveal cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti URL src di bawah dengan foto Anda -->
+                <img src="Images/Frame 2.png" alt="Tawa Kedua" loading="lazy">
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Tawa Kedua</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Sesi Studio</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <!-- Tombol Unduh -->
+                        <button onclick="downloadMedia(event, 'Images/Frame 2.png', 'tawa-kedua.jpg')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors" title="Unduh">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10 transition-colors" title="Lihat Penuh">
+                            <i class="ph ph-arrows-out-simple text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/5.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/5.png', 'polaroid5.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/6.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">24 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/6.png', 'polaroid6.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/7.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/7.png', 'polaroid7.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/8.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/8.png', 'polaroid8.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <!-- ITEM 5 (Video Autoplay) -->
+            <!-- Video butuh atribut autoplay, loop, muted, playsinline agar bisa terputar otomatis di semua device -->
+            <div class="gallery-item hover-target reveal delay-100 cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti src dengan video MP4 Anda -->
+                <video autoplay loop muted playsinline class="grayscale group-hover:grayscale-0">
+                    <source src="Video/Video 2.mp4" type="video/mp4">
+                    Browser Anda tidak mendukung video tag.
+                </video>
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Bergerak</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Sinematik Video</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Video 2.mp4', 'momen-bergerak2.mp4')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <!-- Icon Play menandakan ini video -->
+                            <i class="ph ph-play text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 6 (Gambar GIF) -->
+            <div class="gallery-item hover-target reveal cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti src dengan video MP4 Anda -->
+                <video autoplay loop muted playsinline class="sepia-[.4] group-hover:sepia-0">
+                    <source src="VIdeo/Gif 2.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Kandid Bergerak</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Outdoor Set</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Gif 2.mp4', 'kandid-bergerak2.mp4')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <i class="ph ph-play text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 7 (Gambar Statis) -->
+            <div class="gallery-item hover-target reveal cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti URL src di bawah dengan foto Anda -->
+                <img src="Images/Frame 3.png" alt="Tawa Pertama" loading="lazy">
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Tawa Ketiga</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Sesi Studio</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <!-- Tombol Unduh -->
+                        <button onclick="downloadMedia(event, 'Images/Frame 3.png', 'tawa-ketiga.jpg')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors" title="Unduh">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10 transition-colors" title="Lihat Penuh">
+                            <i class="ph ph-arrows-out-simple text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/9.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/9.png', 'polaroid9.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/10.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/10.png', 'polaroid10.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/11.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/11.png', 'polaroid11.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/12.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/12.png', 'polaroid12.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <!-- ITEM 8 (Video Autoplay) -->
+            <!-- Video butuh atribut autoplay, loop, muted, playsinline agar bisa terputar otomatis di semua device -->
+            <div class="gallery-item hover-target reveal delay-100 cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti src dengan video MP4 Anda -->
+                <video autoplay loop muted playsinline class="grayscale group-hover:grayscale-0">
+                    <source src="Video/Video 3.mp4" type="video/mp4">
+                    Browser Anda tidak mendukung video tag.
+                </video>
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Bergerak</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Sinematik Video</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Video 3.mp4', 'momen-bergerak3.mp4')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <!-- Icon Play menandakan ini video -->
+                            <i class="ph ph-play text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 9 (Gambar GIF) -->
+            <div class="gallery-item hover-target reveal cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti src dengan video MP4 Anda -->
+                <video autoplay loop muted playsinline class="sepia-[.4] group-hover:sepia-0">
+                    <source src="Video/Gif 3.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Kandid Bergerak</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Outdoor Set</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Gif 3.mp4', 'kandid-bergerak3.mp4')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <i class="ph ph-play text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 10 (Gambar Statis) -->
+            <div class="gallery-item hover-target reveal cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti URL src di bawah dengan foto Anda -->
+                <img src="Images/Frame 4.png" alt="Tawa Pertama" loading="lazy">
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Tawa Keempat</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Sesi Studio</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <!-- Tombol Unduh -->
+                        <button onclick="downloadMedia(event, 'Images/Frame 4.png', 'tawa-keempat.jpg')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors" title="Unduh">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10 transition-colors" title="Lihat Penuh">
+                            <i class="ph ph-arrows-out-simple text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/13.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/13.png', 'polaroid13.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/14.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/14.png', 'polaroid14.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/15.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">20 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/15.png', 'polaroid15.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/1.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">24 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/1.png', 'polaroid.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/1.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">24 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/1.png', 'polaroid.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/1.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">24 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/1.png', 'polaroid.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <div class="gallery-item hover-target reveal delay-300 cursor-pointer p-4 bg-[#f4f4f0] transform -rotate-2 hover:rotate-0 transition-all duration-700 shadow-xl hover:shadow-2xl hover:z-10 group" onclick="openLightbox(this)">
+                <div class="overflow-hidden">
+                    <img src="Images/1.png" alt="Polaroid Style" class="w-full h-auto rounded-sm filter contrast-125 saturate-50 group-hover:scale-105 transition-transform duration-[1.5s]" loading="lazy">
+                </div>
+                <div class="pt-8 pb-4 text-center bg-[#f4f4f0] relative">
+                    <p class="font-serif italic text-black/90 text-xl font-medium">"Just the two of us"</p>
+                    <p class="text-black/50 text-[9px] tracking-widest uppercase mt-3 font-medium">24 Oct 2026</p>
+                    
+                    <!-- Tombol Download Khusus Tema Terang -->
+                    <button onclick="downloadMedia(event, 'Images/1.png', 'polaroid.jpg')" class="absolute bottom-4 right-4 w-8 h-8 rounded-full border border-black/10 flex items-center justify-center hover:bg-black/5 transition-colors">
+                        <i class="ph ph-download-simple text-black/60"></i>
+                    </button>
+                </div>
+                <!-- Data tersembunyi untuk lightbox -->
+                <div class="hidden"><p>Just the two of us</p></div>
+            </div>
+
+            <!-- ITEM 11 (Video Autoplay) -->
+            <!-- Video butuh atribut autoplay, loop, muted, playsinline agar bisa terputar otomatis di semua device -->
+            <div class="gallery-item hover-target reveal delay-100 cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti src dengan video MP4 Anda -->
+                <video autoplay loop muted playsinline class="grayscale group-hover:grayscale-0">
+                    <source src="Video/Video 4.mp4" type="video/mp4">
+                    Browser Anda tidak mendukung video tag.
+                </video>
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Bergerak</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Sinematik Video</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Video 4.mp4', 'momen-bergerak.mp4')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <!-- Icon Play menandakan ini video -->
+                            <i class="ph ph-play text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ITEM 12 (Gambar GIF) -->
+            <div class="gallery-item hover-target reveal cursor-pointer group" onclick="openLightbox(this)">
+                <!-- Ganti src dengan video MP4 Anda -->
+                <video autoplay loop muted playsinline class="sepia-[.4] group-hover:sepia-0">
+                    <source src="Video/Gif 4.mp4" type="video/mp4">
+                </video>
+                <div class="gallery-info">
+                    <div>
+                        <p class="text-white font-serif text-2xl italic tracking-wide">Kandid Bergerak</p>
+                        <p class="text-[#d4af37] text-[9px] tracking-widest uppercase mt-2">Outdoor Set</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="downloadMedia(event, 'Video/Gif 4.mp4', 'kandid-bergerak.mp4')" class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm hover:bg-white/20 transition-colors">
+                            <i class="ph ph-download-simple text-white/80 text-lg"></i>
+                        </button>
+                        <div class="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-white/10">
+                            <i class="ph ph-play text-white/80 text-lg"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Penutup / Pesan -->
+    <section class="py-32 md:py-48 px-6 relative overflow-hidden flex flex-col items-center justify-center text-center bg-black">
+        <!-- Ornamen Latar -->
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/[0.03] via-transparent to-transparent"></div>
+        
+        <h2 class="text-5xl md:text-7xl lg:text-[7rem] font-serif italic text-white/90 mb-8 md:mb-12 reveal relative z-10">Ad infinitum.</h2>
+        
+        <p class="text-white/50 font-light tracking-[0.2em] uppercase text-[10px] md:text-xs mb-16 md:mb-20 reveal delay-100 max-w-lg leading-loose relative z-10">
+            Sampai jumpa di lembaran cerita berikutnya. <br class="hidden md:block"> Memori ini akan terus hidup.
+        </p>
+        
+        <div class="w-[1px] h-24 md:h-32 bg-gradient-to-b from-[#d4af37]/80 to-transparent reveal delay-200"></div>
+        
+        <p class="mt-16 md:mt-24 text-[9px] md:text-[10px] text-white/30 tracking-[0.3em] uppercase reveal delay-300">
+            © 2026 Rangga & Cinta. Digital Archive.
+        </p>
+    </section>
+
+    <!-- Lightbox Modal untuk layar penuh -->
+    <div id="lightbox" class="fixed inset-0 z-[200] bg-black/95 hidden opacity-0 transition-opacity duration-500 flex flex-col items-center justify-center backdrop-blur-xl" aria-modal="true" role="dialog">
+        
+        <!-- Loading spinner untuk memuat gambar resolusi tinggi -->
+        <div id="lightbox-loader" class="absolute inset-0 flex items-center justify-center hidden z-10">
+            <div class="w-10 h-10 border-2 border-white/10 border-t-[#d4af37] rounded-full animate-spin"></div>
+        </div>
+
+        <!-- Tombol Tutup Besar untuk Mobile (Touch-friendly) -->
+        <button onclick="closeLightbox()" aria-label="Tutup Galeri" class="hover-target absolute top-6 right-6 md:top-10 md:right-10 text-white/60 hover:text-white transition-colors p-4 z-50 rounded-full hover:bg-white/10 active:bg-white/20 outline-none">
+            <div class="flex items-center gap-3">
+                <span class="text-[10px] uppercase tracking-[0.2em] hidden md:inline-block font-medium">Tutup</span>
+                <i class="ph ph-x text-2xl md:text-3xl"></i>
+            </div>
+        </button>
+
+        <!-- Tombol Unduh Media (Di dalam Lightbox) -->
+        <button id="lightbox-download-btn" aria-label="Unduh Media" class="hover-target absolute top-6 right-[80px] md:top-10 md:right-[140px] text-white/60 hover:text-white transition-colors p-4 z-50 rounded-full hover:bg-white/10 active:bg-white/20 outline-none">
+            <div class="flex items-center gap-3">
+                <span class="text-[10px] uppercase tracking-[0.2em] hidden md:inline-block font-medium">Unduh</span>
+                <i class="ph ph-download-simple text-2xl md:text-3xl"></i>
+            </div>
+        </button>
+        
+        <!-- Kontainer Gambar & Video -->
+        <div class="relative w-full h-full flex flex-col items-center justify-center p-4 md:p-16 z-20" onclick="closeLightbox()">
+            
+            <!-- Wadah Gambar -->
+            <img id="lightbox-img" src="" alt="Gambar Layar Penuh" class="hidden max-w-full max-h-[85vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-700 scale-95 opacity-0 rounded-sm" onclick="event.stopPropagation()">
+            
+            <!-- Wadah Video -->
+            <video id="lightbox-video" controls autoplay playsinline class="hidden max-w-full max-h-[85vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-700 scale-95 opacity-0 rounded-sm" onclick="event.stopPropagation()"></video>
+
+        </div>
+        
+        <!-- Caption di bawah -->
+        <div class="absolute bottom-6 md:bottom-12 left-0 w-full text-center pointer-events-none z-30 px-6">
+            <p id="lightbox-caption" class="text-white font-serif italic text-2xl md:text-4xl drop-shadow-lg tracking-wide"></p>
+        </div>
+    </div>
+
+    <script>
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const btnOpen = document.getElementById('btn-open');
+        const bgMusic = document.getElementById('bg-music');
+        const musicToggleBtn = document.getElementById('music-toggle');
+        const eqContainer = document.getElementById('eq-container');
+        const musicLabel = document.getElementById('music-label');
+        let isPlaying = false;
+
+        // Set volume elegan (tidak terlalu keras)
+        bgMusic.volume = 0.5;
+
+        function updateAudioUI(playing) {
+            isPlaying = playing;
+            if (playing) {
+                eqContainer.classList.add('music-playing');
+                musicLabel.innerText = "Pause";
+                musicToggleBtn.classList.add('border-[#d4af37]/40', 'bg-black/80');
+            } else {
+                eqContainer.classList.remove('music-playing');
+                musicLabel.innerText = "Play";
+                musicToggleBtn.classList.remove('border-[#d4af37]/40', 'bg-black/80');
+            }
+        }
+
+        // Buka Galeri & Mulai Musik
+        btnOpen.addEventListener('click', () => {
+            bgMusic.play().then(() => {
+                updateAudioUI(true);
+            }).catch(e => console.log("Audio error:", e));
+
+            welcomeScreen.classList.add('welcome-slide-up');
+            document.body.classList.add('site-entered');
+            
+            setTimeout(() => {
+                welcomeScreen.style.display = 'none';
+            }, 1200);
+        });
+
+        musicToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            if (isPlaying) {
+                bgMusic.pause();
+                updateAudioUI(false);
+            } else {
+                bgMusic.play().then(() => updateAudioUI(true));
+            }
+        });
+
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('nav-scrolled');
+                navbar.classList.remove('py-6');
+            } else {
+                navbar.classList.remove('nav-scrolled');
+                navbar.classList.add('py-6');
+            }
+        });
+
+        const cursor = document.getElementById('cursor');
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
+        
+        if (!isTouchDevice) {
+            const hoverTargets = document.querySelectorAll('.hover-target, a, button, .gallery-item');
+            document.addEventListener('mousemove', (e) => {
+                requestAnimationFrame(() => {
+                    if(cursor) {
+                        cursor.style.left = e.clientX + 'px';
+                        cursor.style.top = e.clientY + 'px';
+                    }
+                });
+            });
+            hoverTargets.forEach(target => {
+                target.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                target.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+            });
+        }
+
+        const revealElements = document.querySelectorAll('.reveal, .reveal-scale');
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const scrollObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target); 
+                }
+            });
+        }, observerOptions);
+        revealElements.forEach(el => scrollObserver.observe(el));
+
+        function downloadMedia(event, url, filename) {
+            event.stopPropagation();
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) throw new Error('Jaringan error');
+                    return response.blob();
+                })
+                .then(blob => {
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = blobUrl;
+                    a.download = filename || 'memento';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(blobUrl);
+                    document.body.removeChild(a);
+                })
+                .catch(err => {
+                    console.log("Gagal fetch silang domain, menggunakan metode tab baru.");
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.target = '_blank';
+                    a.download = filename || 'memento';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                });
+        }
+
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        galleryItems.forEach(item => {
+            item.addEventListener('touchstart', () => {
+                galleryItems.forEach(i => i.classList.remove('touch-active'));
+                item.classList.add('touch-active');
+            }, {passive: true});
+        });
+
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxVideo = document.getElementById('lightbox-video');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        const lightboxLoader = document.getElementById('lightbox-loader');
+        const lightboxDownloadBtn = document.getElementById('lightbox-download-btn');
+        let currentLightboxUrl = '';
+
+        function openLightbox(element) {
+            const imgEl = element.querySelector('img');
+            const videoEl = element.querySelector('video');
+            const titleEl = element.querySelector('.gallery-info p:first-child') || element.querySelector('.hidden p');
+            
+            lightbox.classList.remove('hidden');
+            lightboxLoader.classList.remove('hidden');
+            
+            void lightbox.offsetWidth;
+            
+            lightbox.classList.remove('opacity-0');
+            lightbox.classList.add('opacity-100');
+            lightboxCaption.innerText = titleEl ? titleEl.innerText : "";
+
+            if (videoEl) {
+                lightboxImg.classList.add('hidden');
+                lightboxVideo.classList.remove('hidden');
+                
+                const sourceTag = videoEl.querySelector('source');
+                currentLightboxUrl = sourceTag ? sourceTag.src : videoEl.src;
+                lightboxVideo.src = currentLightboxUrl;
+                
+                lightboxVideo.onloadeddata = () => {
+                    lightboxLoader.classList.add('hidden');
+                    lightboxVideo.classList.remove('scale-95', 'opacity-0');
+                    lightboxVideo.classList.add('scale-100', 'opacity-100');
+                    lightboxVideo.muted = false; 
+                    lightboxVideo.play();
+                };
+
+                lightboxDownloadBtn.onclick = (e) => downloadMedia(e, currentLightboxUrl, 'memento-video.mp4');
+                
+            } else if (imgEl) {
+                lightboxVideo.classList.add('hidden');
+                lightboxImg.classList.remove('hidden');
+                currentLightboxUrl = imgEl.src;
+
+                const highResImage = new Image();
+                highResImage.src = currentLightboxUrl;
+                
+                highResImage.onload = () => {
+                    lightboxLoader.classList.add('hidden');
+                    lightboxImg.src = highResImage.src;
+                    lightboxImg.classList.remove('scale-95', 'opacity-0');
+                    lightboxImg.classList.add('scale-100', 'opacity-100');
+                };
+
+                const isGif = currentLightboxUrl.toLowerCase().includes('.gif');
+                const ext = isGif ? 'gif' : 'jpg';
+                lightboxDownloadBtn.onclick = (e) => downloadMedia(e, currentLightboxUrl, `memento-photo.${ext}`);
+            }
+
+            document.body.style.overflow = 'hidden';
+            if(!isTouchDevice && cursor) cursor.style.display = 'none';
+        }
+
+        function closeLightbox() {
+            lightboxImg.classList.remove('scale-100', 'opacity-100');
+            lightboxImg.classList.add('scale-95', 'opacity-0');
+            
+            lightboxVideo.classList.remove('scale-100', 'opacity-100');
+            lightboxVideo.classList.add('scale-95', 'opacity-0');
+            
+            lightboxVideo.pause();
+            
+            lightbox.classList.remove('opacity-100');
+            lightbox.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                lightboxImg.src = ""; 
+                lightboxVideo.src = "";
+                lightboxVideo.removeAttribute('src'); 
+                document.body.style.overflow = ''; 
+                if(!isTouchDevice && cursor) cursor.style.display = 'block';
+            }, 500); 
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape" && !lightbox.classList.contains('hidden')) {
+                closeLightbox();
+            }
+        });
+    </script>
+</body>
+</html>
