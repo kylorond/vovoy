@@ -3,26 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Galeri Digital - Onal & Opie</title>
+    <title>Galeri Digital - Ronald & Yovita</title>
     <meta name="description" content="Galeri digital kenangan manis sepasang kekasih dengan desain cinematic dan editorial.">
     <meta name="theme-color" content="#0a0a0a">
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Cormorant Garamond (Sangat Elegan) & Montserrat (Bersih/Modern) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500&display=swap" rel="stylesheet">
-    
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        /* Konfigurasi Font & Body Global */
         body {
             font-family: 'Montserrat', sans-serif;
-            background-color: #050505; /* Hitam lebih pekat untuk kontras tinggi */
+            background-color: #050505; 
             color: #f8f8f2;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
@@ -32,8 +25,6 @@
         h1, h2, h3, .font-serif, .quote-text {
             font-family: 'Cormorant Garamond', serif;
         }
-
-        /* Custom Cursor (Hanya aktif di perangkat yang mendukung hover) */
         @media (hover: hover) and (pointer: fine) {
             body { cursor: none; }
             .custom-cursor {
@@ -61,17 +52,11 @@
                 mix-blend-mode: normal;
             }
         }
-        
-        /* Sembunyikan custom cursor di perangkat sentuh */
         @media (hover: none) { .custom-cursor { display: none !important; } }
-
-        /* Custom Scrollbar yang Elegan */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; transition: background 0.3s;}
         ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
-
-        /* Utility Animasi Scroll Reveal (Performa Tinggi) */
         .reveal {
             opacity: 0;
             transform: translateY(40px);
@@ -207,8 +192,6 @@
             opacity: 0.04;
             background-image: url('data:image/svg+xml,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
         }
-
-        /* Navbar Blur & Scrolled state */
         .nav-scrolled {
             background-color: rgba(5, 5, 5, 0.85);
             backdrop-filter: blur(12px);
@@ -217,43 +200,28 @@
             padding-top: 1rem !important;
             padding-bottom: 1rem !important;
         }
-        
-        /* Cinematic Vignette di Hero */
         .vignette-overlay {
             background: radial-gradient(circle, transparent 40%, rgba(0,0,0,0.8) 120%);
         }
-
-        /* --- TAMBAHAN BARU: Welcome Screen & Elemen Estetik --- */
         .welcome-slide-up {
             transform: translateY(-100%);
             opacity: 0;
             pointer-events: none;
         }
-        
-        /* Efek cahaya elegan pada teks judul */
         .glow-text {
             text-shadow: 0 0 40px rgba(255,255,255,0.3), 0 0 15px rgba(212, 175, 55, 0.2);
         }
-        
-        /* Animasi Hero akan tertunda sampai layar sampul dibuka */
         .site-entered .hero-animate {
             animation: fadeUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
 <body class="antialiased selection:bg-[#d4af37] selection:text-black">
-
-    <!-- Custom Cursor -->
     <div class="custom-cursor hidden md:block" id="cursor"></div>
-
-    <!-- AUDIO PLAYER -->
-    <!-- GANTI SRC DI BAWAH DENGAN URL MUSIK MP3 ANDA -->
     <audio id="bg-music" loop preload="auto" autoplay>
         <source src="Music/Backsound.mp3" type="audio/mpeg">
         Browser Anda tidak mendukung elemen audio.
     </audio>
-
-    <!-- Floating Audio Controller (Responsif positioning) -->
     <button id="music-toggle" aria-label="Toggle Music" class="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 bg-black/40 backdrop-blur-xl border border-white/10 rounded-full p-4 flex items-center justify-center gap-3 hover-target group transition-all duration-300 hover:bg-black/80 hover:border-[#d4af37]/40 shadow-2xl">
         <div class="flex items-end h-4 gap-[3px] w-5" id="eq-container">
             <div class="eq-bar h-[3px]"></div>
@@ -263,21 +231,17 @@
         </div>
         <span class="text-[10px] md:text-xs uppercase tracking-[0.2em] font-medium text-white/70 group-hover:text-white transition-colors" id="music-label">Play</span>
     </button>
-
-    <!-- SAMPUL DEPAN / WELCOME SCREEN (Solusi Cerdas untuk Audio Autoplay) -->
     <div id="welcome-screen" class="fixed inset-0 z-[100] bg-[#050505] flex flex-col items-center justify-center transition-all duration-[1.2s] ease-[cubic-bezier(0.77,0,0.175,1)]">
-        <!-- Background Redup untuk Sampul -->
         <div class="absolute inset-0 z-0">
             <div class="w-full h-full bg-cover bg-center opacity-30 transform scale-105" style="background-image: url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=2070&auto=format&fit=crop');"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/80 to-[#050505]"></div>
         </div>
         
         <div class="relative z-10 text-center flex flex-col items-center px-6 w-full">
-            <!-- Garis Dekoratif -->
             <div class="w-[1px] h-16 md:h-24 bg-gradient-to-b from-transparent to-[#d4af37]/60 mb-6"></div>
             
             <p class="text-[9px] md:text-[10px] tracking-[0.5em] text-[#d4af37] uppercase mb-4 font-medium animate-pulse">
-                Private Exhibition
+                Digital Gallery
             </p>
             
             <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif italic text-white mb-2 tracking-wider glow-text">
@@ -287,66 +251,44 @@
             <p class="text-[9px] text-white/40 tracking-widest uppercase mb-12">
                 Palangka Raya, Okt 2026
             </p>
-            
-            <!-- Tombol Interaksi (Memicu Audio) -->
             <button id="btn-open" class="group relative px-8 py-4 bg-transparent border border-[#d4af37]/30 rounded-full overflow-hidden hover:border-[#d4af37] transition-all duration-500 shadow-[0_0_20px_rgba(212,175,55,0.0)] hover:shadow-[0_0_20px_rgba(212,175,55,0.2)]">
                 <div class="absolute inset-0 bg-gradient-to-r from-[#d4af37] to-[#b5952f] transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-500 ease-out"></div>
                 <span class="relative z-10 text-[10px] md:text-xs uppercase tracking-[0.3em] text-white/80 group-hover:text-black font-semibold transition-colors duration-500 flex items-center gap-3">
                     Buka Galeri <i class="ph ph-envelope-open text-lg"></i>
                 </span>
             </button>
-            
-            <!-- Garis Dekoratif -->
             <div class="w-[1px] h-16 md:h-24 bg-gradient-to-t from-transparent to-[#d4af37]/60 mt-6"></div>
         </div>
     </div>
-
-    <!-- Tekstur Analog Grain -->
     <div class="film-grain"></div>
-
-    <!-- Navbar Pintar -->
     <nav id="navbar" class="fixed w-full z-40 transition-all duration-500 px-6 py-6 md:px-12 flex justify-between items-center bg-gradient-to-b from-black/80 via-black/30 to-transparent">
         <div class="text-lg md:text-2xl font-serif tracking-[0.2em] font-light text-white hover-target cursor-pointer z-50">
             RONALD <span class="italic text-[#d4af37]">&</span> YOVITA
         </div>
-        
-        <!-- Desktop Menu -->
         <div class="hidden md:flex space-x-12 text-[11px] tracking-[0.2em] uppercase text-white/70 font-medium">
             <a href="#prolog" class="hover:text-[#d4af37] hover:tracking-[0.25em] hover-target transition-all duration-300">Prolog</a>
-            <a href="#galeri" class="hover:text-[#d4af37] hover:tracking-[0.25em] hover-target transition-all duration-300">Arsip</a>
+            <a href="#galeri" class="hover:text-[#d4af37] hover:tracking-[0.25em] hover-target transition-all duration-300">Gallery</a>
         </div>
     </nav>
-
-    <!-- Hero Section -->
     <header class="relative h-[100svh] w-full flex items-center justify-center overflow-hidden bg-black">
-        
-        <!-- Background Layer -->
         <div class="absolute inset-0 z-0">
-            <!-- Background Gambar (Default) -->
-            <!-- Ganti URL di backgroundImage untuk mengganti foto utama -->
             <div class="w-full h-full bg-cover bg-center opacity-60 transform scale-105 animate-[slowZoom_25s_ease-in-out_infinite_alternate]" 
                  style="background-image: url('Images/2.png'); background-position: center 30%;">
             </div>
-
-            <!-- Gradient Overlays & Vignette untuk memastikan teks terbaca & memberi kesan dramatis -->
             <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-black/20 to-black/40"></div>
             <div class="absolute inset-0 vignette-overlay"></div>
         </div>
         <style>@keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.15); } }</style>
-
-        <!-- Main Hero Content -->
         <div class="relative z-10 text-center px-4 w-full flex flex-col items-center justify-center h-full pt-16">
             <p class="hero-animate text-[10px] md:text-xs tracking-[0.5em] text-[#d4af37] uppercase mb-6 md:mb-8 opacity-0 transform translate-y-6 font-medium" style="animation-delay: 0.4s;">
-                Digital Exhibition
+                Digital Gallery
             </p>
-            
-            <!-- Judul Sinematik yang Responsif -->
             <h1 class="hero-animate text-6xl sm:text-7xl md:text-8xl lg:text-[10rem] font-serif font-light text-white leading-[0.9] mb-6 md:mb-8 opacity-0 transform translate-y-8 tracking-wide drop-shadow-2xl glow-text" style="animation-delay: 0.7s;">
                 Our <span class="italic text-white/90">Moments</span>
             </h1>
             
             <p class="hero-animate text-xs md:text-sm font-light text-white/70 opacity-0 transform translate-y-6 max-w-[280px] md:max-w-md mx-auto tracking-wide leading-relaxed" style="animation-delay: 1s;">
-                Menangkap fragmen waktu; tawa yang terbingkai, pandangan yang abadi dan rasa yang tak pernah pudar.
+                Fragmen waktu yang tersimpan apa adanya. Tentang tawa di dalam bingkai dan rasa nyaman yang tetap sama.
             </p>
             
             <!-- Indikator Scroll Halus
@@ -364,42 +306,39 @@
         @keyframes scrollDown { 0% { transform: translateY(-100%); } 100% { transform: translateY(200%); } }
     </style>
 
-    <!-- Marquee Pembatas -->
     <div class="py-8 border-y border-white/5 bg-[#050505] relative z-20 overflow-hidden">
         <div class="marquee-container text-white/10 font-serif italic text-3xl md:text-5xl lg:text-6xl">
             <div class="marquee-content">
-                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">A timeless connection.</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Dua Hati, Satu Galeri.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Moments frozen in light.</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Kisah Kita, Terukir di Kanvas Digital.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Just you and me.</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Bingkai Cinta Tanpa Batas Waktu.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">A timeless connection.</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Katalog Berdua.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Moments frozen in light.</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Menyimpan Momen, Merawat Ingatan.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Just you and me.</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Sudut Pandang Berdua.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
             </div>
-            <!-- Duplikasi untuk loop tak terhingga -->
             <div class="marquee-content" aria-hidden="true">
-                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">A timeless connection.</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Dua Hati, Satu Galeri.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Moments frozen in light.</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Kisah Kita, Terukir di Kanvas Digital.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Just you and me.</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Bingkai Cinta Tanpa Batas Waktu.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">A timeless connection.</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Katalog Berdua.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Moments frozen in light.</span>
+                <span class="mx-8 md:mx-12 hover:text-[#d4af37]/40 transition-colors duration-700">Menyimpan Momen, Merawat Ingatan.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
-                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Just you and me.</span>
+                <span class="mx-8 md:mx-12 hover:text-white/40 transition-colors duration-700">Sudut Pandang Berdua.</span>
                 <span class="mx-8 md:mx-12 text-[#d4af37]">-</span>
             </div>
         </div>
     </div>
 
-    <!-- Prolog (Editorial Layout - Mobile Responsive) -->
     <section id="prolog" class="py-24 md:py-40 px-6 max-w-7xl mx-auto flex flex-col md:flex-row gap-12 md:gap-24 items-center">
         <!-- Area Gambar Prolog -->
         <div class="w-full md:w-5/12 reveal-scale">
@@ -421,30 +360,20 @@
             </div>
             
             <h3 class="text-4xl sm:text-5xl lg:text-[4rem] font-serif leading-[1.1] mb-8 reveal delay-100">
-                Bukan sekadar <br> <span class="italic text-white/80 font-light">pose di depan kamera.</span>
+                Lebih dari sekadar <br> <span class="italic text-white/80 font-light">pose di depan kamera.</span>
             </h3>
             
             <p class="text-white/60 font-light leading-relaxed mb-10 reveal delay-200 text-sm md:text-base max-w-xl mx-auto md:mx-0">
-                Koleksi ini adalah arsip dari hari-hari biasa yang terasa luar biasa. Dari sesi studio yang terkonsep rapi hingga keseruan spontan yang berisik di bilik <i>photobooth</i>. Kami membiarkan lensa menangkap apa adanya: canggung yang menggemaskan, tawa yang lepas dan kebersamaan yang jujur.
+                Koleksi ini merekam cerita apa adanya—dari presisi sesi studio hingga riuhnya tawa di bilik <i>photobooth.</i> Tentang canggung yang natural, senyum tanpa rekayasa dan momen biasa yang mendadak berharga.
             </p>
-            
-            <!-- <div class="reveal delay-300 flex justify-center md:justify-start">
-                <img src="Images/3.png" alt="Signature" class="h-10 md:h-12 filter invert opacity-30">
-            </div> -->
         </div>
     </section>
-
-    <!-- Galeri Arsip (Mendukung Foto, GIF, dan Video) -->
     <section id="galeri" class="px-4 sm:px-6 md:px-8 pb-32 md:pb-48 max-w-[1600px] mx-auto bg-[#050505] relative z-10">
-        
-        <!-- Header Galeri -->
         <div class="text-center mb-16 md:mb-24 reveal flex flex-col items-center">
-            <h2 class="text-4xl md:text-6xl lg:text-7xl font-serif italic text-white/90">Arsip Visual</h2>
+            <h2 class="text-4xl md:text-6xl lg:text-7xl font-serif italic text-white/90">Gallery</h2>
             <div class="w-16 h-[1px] bg-[#d4af37] my-6"></div>
             <p class="text-[10px] md:text-xs tracking-[0.3em] text-white/40 uppercase font-medium">Photo, GIF & Video Series</p>
         </div>
-
-        <!-- CSS Columns untuk layout Masonry -->
         <div class="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 sm:gap-6">
             
             <!-- ITEM 1 (Gambar Statis) -->
@@ -1007,27 +936,22 @@
         <div class="w-[1px] h-24 md:h-32 bg-gradient-to-b from-[#d4af37]/80 to-transparent reveal delay-200"></div>
         
         <p class="mt-16 md:mt-24 text-[9px] md:text-[10px] text-white/30 tracking-[0.3em] uppercase reveal delay-300">
-            © 2026 Rangga & Cinta. Digital Archive.
+            © 2026 Ronald & Yovita. Digital Gallery.
         </p>
     </section>
 
-    <!-- Lightbox Modal untuk layar penuh -->
     <div id="lightbox" class="fixed inset-0 z-[200] bg-black/95 hidden opacity-0 transition-opacity duration-500 flex flex-col items-center justify-center backdrop-blur-xl" aria-modal="true" role="dialog">
         
-        <!-- Loading spinner untuk memuat gambar resolusi tinggi -->
         <div id="lightbox-loader" class="absolute inset-0 flex items-center justify-center hidden z-10">
             <div class="w-10 h-10 border-2 border-white/10 border-t-[#d4af37] rounded-full animate-spin"></div>
         </div>
 
-        <!-- Tombol Tutup Besar untuk Mobile (Touch-friendly) -->
         <button onclick="closeLightbox()" aria-label="Tutup Galeri" class="hover-target absolute top-6 right-6 md:top-10 md:right-10 text-white/60 hover:text-white transition-colors p-4 z-50 rounded-full hover:bg-white/10 active:bg-white/20 outline-none">
             <div class="flex items-center gap-3">
                 <span class="text-[10px] uppercase tracking-[0.2em] hidden md:inline-block font-medium">Tutup</span>
                 <i class="ph ph-x text-2xl md:text-3xl"></i>
             </div>
-        </button>
-
-        <!-- Tombol Unduh Media (Di dalam Lightbox) -->
+        </button
         <button id="lightbox-download-btn" aria-label="Unduh Media" class="hover-target absolute top-6 right-[80px] md:top-10 md:right-[140px] text-white/60 hover:text-white transition-colors p-4 z-50 rounded-full hover:bg-white/10 active:bg-white/20 outline-none">
             <div class="flex items-center gap-3">
                 <span class="text-[10px] uppercase tracking-[0.2em] hidden md:inline-block font-medium">Unduh</span>
@@ -1035,18 +959,14 @@
             </div>
         </button>
         
-        <!-- Kontainer Gambar & Video -->
         <div class="relative w-full h-full flex flex-col items-center justify-center p-4 md:p-16 z-20" onclick="closeLightbox()">
             
-            <!-- Wadah Gambar -->
             <img id="lightbox-img" src="" alt="Gambar Layar Penuh" class="hidden max-w-full max-h-[85vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-700 scale-95 opacity-0 rounded-sm" onclick="event.stopPropagation()">
-            
-            <!-- Wadah Video -->
+
             <video id="lightbox-video" controls autoplay playsinline class="hidden max-w-full max-h-[85vh] object-contain shadow-[0_0_50px_rgba(0,0,0,0.5)] transition-all duration-700 scale-95 opacity-0 rounded-sm" onclick="event.stopPropagation()"></video>
 
         </div>
         
-        <!-- Caption di bawah -->
         <div class="absolute bottom-6 md:bottom-12 left-0 w-full text-center pointer-events-none z-30 px-6">
             <p id="lightbox-caption" class="text-white font-serif italic text-2xl md:text-4xl drop-shadow-lg tracking-wide"></p>
         </div>
@@ -1061,7 +981,6 @@
         const musicLabel = document.getElementById('music-label');
         let isPlaying = false;
 
-        // Set volume elegan (tidak terlalu keras)
         bgMusic.volume = 0.5;
 
         function updateAudioUI(playing) {
